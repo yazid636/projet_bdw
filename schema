@@ -38,3 +38,5 @@ AVEC_LE_TIRAGE, 11 TIR, 1N CARTE
 CARTE: idC
 EST_DE_TYPE, 11 CARTE, 1N TYPE_CARTE
 TYPE_CARTE: code, bonus?, nom, description, image
+
+ajouter sauver_willy, ajouter leurre, enlever revelation
