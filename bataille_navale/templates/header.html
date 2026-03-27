@@ -1,0 +1,14 @@
+<header>
+	<div>
+		<a href="/">
+			<img src="/bataille_navale/static/img/logo.png" width="5%" height="5%" style="float: left;">
+		</a>
+	</div>
+	<!-- le titre <h1> à personnaliser ! -->
+	<h1>{{ SESSION['APP'] }}</h1>
+	<!-- NB : si vous souhaitez également modifier le titre qui apparait 
+		dans l'onglet du navigateur (ce qui serait logique !), 
+		c'est une métadonnée de la page (dans la balise <head> de index.php).
+	 -->	
+	<strong>{{ SESSION['BASELINE'] }}</strong>
+</header>
