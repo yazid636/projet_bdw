@@ -10,9 +10,10 @@ footer {
 }
 
 header {
-    background-color: #FF9900;
+    background-color: #3179ff;
     text-align: center;
     border-radius: 1em;
+    color: #ffecdb;
 }
 
 #div-central {
@@ -26,7 +27,7 @@ header {
 
 nav {
 	flex : 2;
-    background-color: #b59ff7;
+    background-color: #9fdef7;
     padding-left: 0.5em;
     padding-right: 0.5em;
 	margin-left: 2em;
@@ -34,7 +35,7 @@ nav {
 }
 
 nav > ul {
-	padding-left: 0.5em;
+	padding-left: 2em;
 }
 
 nav a {
@@ -56,7 +57,7 @@ main {
 footer {
 	display: flex;
 	justify-content: space-around;
-    background-color: #669933;
+    background-color: #6e817d;
     border-radius: 1em;
 }
 
@@ -105,4 +106,9 @@ footer {
 
 #tab_res_rech > thead > tr > th {
     background-color: lightgrey;
+}
+
+#logo{
+    float: left;
+    margin-left: 5%;
 }

@@ -103,3 +103,10 @@ def get_table_like(connexion, nom_table, like_pattern):
 
 
 
+
+
+
+
+def get_joueurs(connexion, nom_table):
+    query = sql.SQL('SELECT * FROM {table}').format(table=sql.Identifier(nom_table), )
+    return execute_select_query(connexion, query)
