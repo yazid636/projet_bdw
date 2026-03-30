@@ -1,11 +1,14 @@
 NAVIRE: id, type, x, y, sens, etat
 DANS_FLOTILLE, 11 NAVIRE, 1N FLOTILLE
 FLOTILLE: id, pavillon, nb_navires, 
-REVELATION: id_grille, x, y, resultat
 
 PROPRIETAIRE, 11 FLOTILLE, 1N JOUEUR
 DANS_PARTIE, 11 FLOTILLE, 1N PARTIE
-REVELATION_DANS, 11 REVELATION, 0N PARTIE
+LEURRE: id, x, y 
+A_LEURRE, 11 LEURRE, 0N PARTIE
+SAUVER_WILLY: id, x, y
+A_ORQUE, 11 SAUVER_WILLY, 0N PARTIE
+
 
 VIRTUEL: niveau
 JOUE_VIRT, 1N VIRTUEL, 11 PARTIE
@@ -38,5 +41,3 @@ AVEC_LE_TIRAGE, 11 TIR, 1N CARTE
 CARTE: idC
 EST_DE_TYPE, 11 CARTE, 1N TYPE_CARTE
 TYPE_CARTE: code, bonus?, nom, description, image
-
-ajouter sauver_willy, ajouter leurre, enlever revelation
