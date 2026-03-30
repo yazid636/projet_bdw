@@ -93,8 +93,8 @@ def get_table_like(connexion, nom_table, like_pattern):
     """
     motif = '%' + like_pattern + '%'
     nom_att = 'nom'  # nom attribut dans ingrédient 
-    if nom_table == 'recette':  
-        nom_att += '_recette'  # nom attribut dans recette 
+    if nom_table == 'joueur':  
+        nom_att += '_joueur'  # nom attribut dans recette 
     query = sql.SQL("SELECT * FROM {} WHERE {} ILIKE {}").format(
         sql.Identifier(nom_table),
         sql.Identifier(nom_att),

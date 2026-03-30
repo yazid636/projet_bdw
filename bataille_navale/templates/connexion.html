@@ -1,5 +1,25 @@
-<h1>Hello world</h1>
+{% extends "base.html" %}
 
-{% for i in REQUEST_VARS['joueurs'] %}
-    {{ i }}
-{% endfor %}
+{% block main_content %}
+
+    <h2>Recherche votre pseudo</h2>
+
+    {% for attribut in REQUEST_VARS['joueurs']  %}
+        {{ attribut['pseudo'] }}
+    {% endfor %}
+
+    <form method="post">	
+        <input type="text" name="recherche" id="id_valeur" placeholder="pseudo" required />
+        <input type="submit" name="bouton_valider" value="Rechercher"/>
+    </form>
+
+
+    {% if REQUEST_VARS.resultats %}
+        {% for joueur in REQUEST_VARS.resultats %}
+            {{ joueur[1] }}
+        {% endfor %}
+    {% else %}
+        <p>Aucun résultat</p>
+    {% endif %}
+
+{% endblock %}
