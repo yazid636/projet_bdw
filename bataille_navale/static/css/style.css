@@ -1,5 +1,6 @@
 body {
-    background-color: #FFFFFF;
+    background-color: #fff6ee;
+    font-family: "Arial", sans-serif;
 }
 
 header,
@@ -13,7 +14,7 @@ header {
     background-color: #3179ff;
     text-align: center;
     border-radius: 1em;
-    color: #ffecdb;
+    color: #fff6ee;
 }
 
 #div-central {
@@ -50,7 +51,7 @@ nav a:visited {
 
 main {
 	flex : 10;
-    background-color: #FFFFFF;
+    background-color: #fff6ee;
     padding-left: 3em;
 }
 

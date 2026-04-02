@@ -101,12 +101,21 @@ def get_table_like(connexion, nom_table, like_pattern):
         sql.Placeholder())
     return execute_select_query(connexion, query, [motif])
 
-
-
-
-
-
-
 def get_joueurs(connexion, nom_table):
     query = sql.SQL('SELECT * FROM {table}').format(table=sql.Identifier(nom_table), )
     return execute_select_query(connexion, query)
+
+def get_moyenne_tours(conn, joueur_id):
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT AVG(nb_tours) AS moyenne_tours
+        FROM (
+            SELECT COUNT(*) AS nb_tours
+            FROM PARTIE p
+            JOIN TOUR t ON p.code = t.code
+            WHERE p.id = %s
+            GROUP BY p.code
+        ) AS sous_requete
+    """, (str(joueur_id),))
+    result = cur.fetchone()
+    return result[0] if result else 0

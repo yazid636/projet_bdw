@@ -1,14 +1,20 @@
 <header>
-	<div>
-		<a href="/">
-			<img id="logo" src="/bataille_navale/static/img/logo.png" width="5%" height="5%">
-		</a>
+
+    <div>
+        <a href="/">
+            <img id="logo" src="/bataille_navale/static/img/logo.png" width="5%" height="5%">
+        </a>
+    </div>
+    
+    <h1>{{ SESSION['APP'] }}</h1>
+    <strong>{{ SESSION['BASELINE'] }}</strong>
+
+    <div style="position:absolute; top:20px; right:20px;">
+		{% if SESSION.PSEUDO %}
+			Connecté en tant que <strong>{{ SESSION.PSEUDO }}</strong>
+		{% else %}
+			<a href="/connexion">Se connecter</a>
+		{% endif %}
 	</div>
-	<!-- le titre <h1> à personnaliser ! -->
-	<h1>{{ SESSION['APP'] }}</h1>
-	<!-- NB : si vous souhaitez également modifier le titre qui apparait 
-		dans l'onglet du navigateur (ce qui serait logique !), 
-		c'est une métadonnée de la page (dans la balise <head> de index.php).
-	 -->	
-	<strong>{{ SESSION['BASELINE'] }}</strong>
+
 </header>

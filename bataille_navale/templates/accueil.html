@@ -1,14 +1,24 @@
 {% extends "base.html" %}
 
+
 {% block main_content %}
 <h2>Jeu web de bataille navale</h2>
 
 <p id="parag_description">
-	Vous pouvez joueur à la bataille navale contre d'autres joueurs.
-	<br>
-	Utilisez le menu à gauche pour découvrir les fonctionnalités de ce site.
+    Vous pouvez jouer à la bataille navale contre d'autres joueurs.
+    <br>
+    Utilisez le menu à gauche pour découvrir les fonctionnalités de ce site.
 </p>
 
-{% include 'message.html' %}
+{% if SESSION.PSEUDO %}
+    {% if REQUEST_VARS.moyenne_tours is not none %}
+        <p>
+            Nombre moyen de tours par partie pour <strong>{{ SESSION.PSEUDO }}</strong> : 
+            <strong>{{ REQUEST_VARS.moyenne_tours|round(2) }}</strong>
+        </p>
+    {% else %}
+        <p>{{ SESSION.PSEUDO }} n'a encore joué aucune partie.</p>
+    {% endif %}
+{% endif %}
 
 {% endblock %}
