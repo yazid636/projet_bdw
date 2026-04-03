@@ -92,9 +92,9 @@ def get_table_like(connexion, nom_table, like_pattern):
     String like_pattern : motif pour une requête LIKE
     """
     motif = '%' + like_pattern + '%'
-    nom_att = 'nom'  # nom attribut dans ingrédient 
+    nom_att = 'nom' 
     if nom_table == 'joueur':  
-        nom_att += '_joueur'  # nom attribut dans recette 
+        nom_att += '_joueur' 
     query = sql.SQL("SELECT * FROM {} WHERE {} ILIKE {}").format(
         sql.Identifier(nom_table),
         sql.Identifier(nom_att),
@@ -107,7 +107,7 @@ def get_joueurs(connexion, nom_table):
 
 def get_moyenne_tours(conn, joueur_id):
     cur = conn.cursor()
-    cur.execute("""SELECT AVG(nb_tours) AS moyenne_tours FROM (SELECT COUNT(*) AS nb_tours FROM PARTIE p JOIN TOUR t ON p.code = t.code WHERE p.id = %s GROUP BY p.code) AS sous_requete""", (str(joueur_id),))
+    cur.execute("""SELECT AVG(nb_tours) AS moyenne_tours FROM (SELECT COUNT(*) AS nb_tours FROM PARTIE p JOIN TOUR t ON p.id = t.id_partie WHERE p.id = %s GROUP BY p.id) AS sous_requete""", (str(joueur_id),))
     result = cur.fetchone()
     if result is not None and len(result) > 0:
         return result[0]
