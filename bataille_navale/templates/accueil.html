@@ -14,7 +14,7 @@
     {% if REQUEST_VARS.moyenne_tours is not none %}
         <p>
             Nombre moyen de tours par partie pour <strong>{{ SESSION.PSEUDO }}</strong> : 
-            <strong>{{ REQUEST_VARS.moyenne_tours|round(2) }}</strong>
+            <strong>{{ REQUEST_VARS.moyenne_tours }}</strong>
         </p>
     {% else %}
         <p>{{ SESSION.PSEUDO }} n'a encore joué aucune partie.</p>

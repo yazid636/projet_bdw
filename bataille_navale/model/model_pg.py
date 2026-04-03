@@ -107,15 +107,9 @@ def get_joueurs(connexion, nom_table):
 
 def get_moyenne_tours(conn, joueur_id):
     cur = conn.cursor()
-    cur.execute("""
-        SELECT AVG(nb_tours) AS moyenne_tours
-        FROM (
-            SELECT COUNT(*) AS nb_tours
-            FROM PARTIE p
-            JOIN TOUR t ON p.code = t.code
-            WHERE p.id = %s
-            GROUP BY p.code
-        ) AS sous_requete
-    """, (str(joueur_id),))
+    cur.execute("""SELECT AVG(nb_tours) AS moyenne_tours FROM (SELECT COUNT(*) AS nb_tours FROM PARTIE p JOIN TOUR t ON p.code = t.code WHERE p.id = %s GROUP BY p.code) AS sous_requete""", (str(joueur_id),))
     result = cur.fetchone()
-    return result[0] if result else 0
+    if result is not None and len(result) > 0:
+        return result[0]
+    else:
+        return 0
