@@ -2,31 +2,47 @@
 
 {% block main_content %}
 
-    <h2>Recherche votre pseudo</h2>
+    <h2>Rechercher votre pseudo</h2>
     
     <form method="post">	
         <input type="text" name="recherche" id="id_valeur" placeholder="pseudo" required />
         <input type="submit" name="bouton_valider" value="Rechercher"/>
     </form>
 
-
-    {% if REQUEST_VARS.resultats %}
-        {% for joueur in REQUEST_VARS.resultats %}
-            <form method="post" style="display:inline;">
-                <input type="hidden" name="joueur_id" value="{{ joueur[0] }}">
-                <input type="submit" 
-                       name="choisir_joueur" 
-                       value="{{ joueur[1] }}">
-            </form>
-        {% endfor %}
-    {% else %}
-        <p>Aucun résultat</p>
+    {% if REQUEST_VARS.resultats is not none %}
+        {% if REQUEST_VARS.resultats %}
+            {% for joueur in REQUEST_VARS.resultats %}
+                <form method="post" style="display:inline;">
+                    <input type="hidden" name="joueur_id" value="{{ joueur[0] }}">
+                    <input type="submit" 
+                           name="choisir_joueur" 
+                           value="{{ joueur[1] }}">
+                </form>
+            {% endfor %}
+        {% else %}
+            <p>Aucun résultat pour cette recherche.</p>
+        {% endif %}
     {% endif %}
 
-    <h2>Ajouter un nouveau pseudo</h2>
+    <h2>Créer un nouveau compte</h2>
     <form method="post">
-        <input type="text" name="nouveau_pseudo" placeholder="Nouveau pseudo" required />
-        <input type="submit" name="ajouter_joueur" value="Ajouter"/>
+        <label for="nouveau_pseudo">Pseudo</label><br>
+        <input type="text" name="nouveau_pseudo" id="nouveau_pseudo" placeholder="Pseudo" required /><br><br>
+
+        <label for="nouveau_nom">Nom</label><br>
+        <input type="text" name="nouveau_nom" id="nouveau_nom" placeholder="Nom" required /><br><br>
+
+        <label for="nouveau_prenom">Prénom</label><br>
+        <input type="text" name="nouveau_prenom" id="nouveau_prenom" placeholder="Prénom" required /><br><br>
+
+        <label for="nouvelle_ddn">Date de naissance</label><br>
+        <input type="date" name="nouvelle_ddn" id="nouvelle_ddn" required /><br><br>
+
+        <input type="submit" name="ajouter_joueur" value="Créer le compte"/>
     </form>
+
+    {% if REQUEST_VARS.erreur_creation %}
+        <p style="color:red;">{{ REQUEST_VARS.erreur_creation }}</p>
+    {% endif %}
 
 {% endblock %}

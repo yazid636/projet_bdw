@@ -6,14 +6,13 @@ from logzero import logger
 def execute_select_query(connexion, query, params=[]):
     """
     Méthode générique pour exécuter une requête SELECT (qui peut retourner plusieurs instances).
-    Utilisée par des fonctions plus spécifiques.
     """
     with connexion.cursor() as cursor:
         try:
             cursor.execute(query, params)
             cursor.row_factory = dict_row
             result = cursor.fetchall()
-            return result 
+            return result
         except psycopg.Error as e:
             logger.error(e)
     return None
@@ -21,95 +20,70 @@ def execute_select_query(connexion, query, params=[]):
 def execute_other_query(connexion, query, params=[]):
     """
     Méthode générique pour exécuter une requête INSERT, UPDATE, DELETE.
-    Utilisée par des fonctions plus spécifiques.
     """
     with connexion.cursor() as cursor:
         try:
             cursor.execute(query, params)
             result = cursor.rowcount
-            return result 
+            return result
         except psycopg.Error as e:
             logger.error(e)
     return None
 
 def get_instances(connexion, nom_table):
     """
-    Retourne les instances de la table nom_table
-    String nom_table : nom de la table
+    Retourne toutes les instances de la table nom_table.
     """
-    query = sql.SQL('SELECT * FROM {table}').format(table=sql.Identifier(nom_table), )
+    query = sql.SQL('SELECT * FROM {table}').format(table=sql.Identifier(nom_table))
     return execute_select_query(connexion, query)
 
 def count_instances(connexion, nom_table):
     """
-    Retourne le nombre d'instances de la table nom_table
-    String nom_table : nom de la table
+    Retourne le nombre d'instances de la table nom_table.
     """
     query = sql.SQL('SELECT COUNT(*) AS nb FROM {table}').format(table=sql.Identifier(nom_table))
     return execute_select_query(connexion, query)
 
-
-
-def get_recipe(connexion, id_recette):
+def get_joueurs(connexion, nom_table):
     """
-    Retourne les informations concernant la recette identifiée par id_recette
+    Retourne tous les joueurs de la table spécifiée.
     """
-    query = 'SELECT * FROM recette WHERE id_recette=%s'
-    return execute_select_query(connexion, query, [id_recette])
-
-def get_steps_recipe(connexion, id_recette):
-    """
-    Retourne les étapes de la recette recette id_recette
-    Integer id_recette : identifiant de la recette
-    """
-    query = 'SELECT * FROM etape WHERE id_recette=%s ORDER BY numero'
-    return execute_select_query(connexion, query, [id_recette])
-
-def is_existing_recipe(connexion, nom_recette):
-    """
-    retourne True si le nom de la recette n'existe pas dans la BD
-    String nom_recette : nom de la recette
-    Retourne un booléen
-    """
-    query = 'SELECT count(*) AS nb FROM recette WHERE nom_recette=%s'
-    nb = execute_select_query(connexion, query, [nom_recette])[0]['nb']
-    return (nb > 0)
-
-def insert_recipe(connexion, nom_recette, cat_recette):
-    """
-    Insère une nouvelle recette dans la BD
-    String nom_recette : nom de la recette
-    String cat_recette : catégorie de la recette
-    Retourne le nombre de tuples insérés, ou None
-    """
-    query = 'INSERT INTO recette (nom_recette, catégorie) VALUES(%s,%s)'
-    return execute_other_query(connexion, query, [nom_recette,cat_recette])
+    query = sql.SQL('SELECT * FROM {table}').format(table=sql.Identifier(nom_table))
+    return execute_select_query(connexion, query)
 
 def get_table_like(connexion, nom_table, like_pattern):
     """
-    Retourne les instances de la table nom_table dont le nom correspond au motif like_pattern
-    String nom_table : nom de la table
-    String like_pattern : motif pour une requête LIKE
+    Retourne les instances de la table dont le pseudo correspond au motif like_pattern.
+    Fonctionne sur la colonne 'pseudo' pour la table joueur.
     """
     motif = '%' + like_pattern + '%'
-    nom_att = 'nom' 
-    if nom_table == 'joueur':  
-        nom_att += '_joueur' 
+    # La table JOUEUR utilise la colonne 'pseudo'
+    nom_att = 'pseudo'
     query = sql.SQL("SELECT * FROM {} WHERE {} ILIKE {}").format(
         sql.Identifier(nom_table),
         sql.Identifier(nom_att),
-        sql.Placeholder())
+        sql.Placeholder()
+    )
     return execute_select_query(connexion, query, [motif])
 
-def get_joueurs(connexion, nom_table):
-    query = sql.SQL('SELECT * FROM {table}').format(table=sql.Identifier(nom_table), )
-    return execute_select_query(connexion, query)
-
 def get_moyenne_tours(conn, joueur_id):
+    """
+    Retourne le nombre moyen de tours par partie pour un joueur donné.
+    Utilise id_partie (clé primaire de PARTIE) et id_humain (FK vers HUMAIN).
+    """
     cur = conn.cursor()
-    cur.execute("""SELECT AVG(nb_tours) AS moyenne_tours FROM (SELECT COUNT(*) AS nb_tours FROM PARTIE p JOIN TOUR t ON p.id = t.id_partie WHERE p.id = %s GROUP BY p.id) AS sous_requete""", (str(joueur_id),))
+    cur.execute("""
+        SELECT AVG(nb_tours) AS moyenne_tours
+        FROM (
+            SELECT COUNT(*) AS nb_tours
+            FROM PARTIE p
+            JOIN TOUR t ON p.id_partie = t.id_partie
+            WHERE p.id_humain = %s
+            GROUP BY p.id_partie
+        ) AS sous_requete
+    """, (str(joueur_id),))
     result = cur.fetchone()
-    if result is not None and len(result) > 0:
+    if result is not None and result[0] is not None:
         return result[0]
     else:
-        return 0
+        return None
