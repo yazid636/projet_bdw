@@ -113,3 +113,12 @@ footer {
     float: left;
     margin-left: 5%;
 }
+
+#nouvelle_partie {
+    display: flex;
+    gap: 20px; /* espace entre les deux */
+}
+
+.colonne {
+    width: 50%;
+}

@@ -1,1 +1,48 @@
-<h1>Hello world</h1>
+{% extends "base.html" %}
+
+{% block main_content %}
+    <h2>Créer une nouvelle partie</h2>
+
+    <div id="nouvelle_partie">
+        <p>
+            <div class="colonne">
+                <h3>Séléctionnez un adversaire pour votre partie</h3>
+                <form method="post">
+                        {% for joueur in REQUEST_VARS.joueurs_virtuels %}
+                            <input type="radio" name="id_virtuel" value="{{ joueur[1] }}"><label>{{ joueur[0] }}</label><br>
+                        {% endfor %}
+                    <br>
+                    <input type="submit" name="creer_partie" value="Créer partie">
+                </form>
+            </div>
+        </p>
+
+        <p>
+            <div class="colonne">
+                <h3>Créer un adversaire</h3>
+                <form method="post">
+                    <label for="nouveau_pseudo">Pseudo</label><br>
+                    <input type="text" name="nouveau_pseudo" id="nouveau_pseudo" placeholder="Pseudo" required /><br><br>
+
+                    <label for="niveau">Niveau</label>
+                    <select name="niveau" id="niveau">
+                        <option value="novice">Novice</option>
+                        <option value="intermediaire">Intermédiaire</option>
+                        <option value="expert">Expert</option>
+                    </select>
+                    <br><br>
+
+                    <input type="submit" name="ajouter_virtuel" value="Créer joueur virtuel">
+
+                </form>
+            </div>
+        </p>
+    </div>
+
+
+
+
+    <br>
+    <h2>Vos parties en cours</h2>
+    ...
+{% endblock %}
