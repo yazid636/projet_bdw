@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 
 {% block main_content %}
+    {% if not REQUEST_VARS.joueur_connecte %}
+        <p>Vous devez vous connecter pour accéder aux parties.</p>
+    {% elif not REQUEST_VARS.joueur_humain %}
+        <p>Seul un joueur humain peut créer ou reprendre des parties. Connectez-vous avec un joueur humain.</p>
+    {% else %}
+    {% if REQUEST_VARS.erreur_creation %}
+        <div class="alert-error">{{ REQUEST_VARS.erreur_creation }}</div>
+    {% endif %}
     <h2>Créer une nouvelle partie</h2>
 
     <div id="nouvelle_partie">
@@ -44,5 +52,41 @@
 
     <br>
     <h2>Vos parties en cours</h2>
-    ...
+    {% if REQUEST_VARS.parties_en_cours %}
+        <table id="table_parties">
+            <thead>
+                <tr>
+                    <th>Date et heure de creation</th>
+                    <th>Adversaire</th>
+                    <th>Niveau de l'adversaire</th>
+                    <th>Nombre de tours</th>
+                    <th>Vos navires coules</th>
+                    <th>Vos navires touches</th>
+                    <th>Navires adverses coules</th>
+                    <th>Navires adverses touches</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for partie in REQUEST_VARS.parties_en_cours %}
+                    <tr>
+                        <td>{{ partie.creation_affichage }}</td>
+                        <td>{{ partie.adversaire_pseudo }}</td>
+                        <td>{{ partie.adversaire_niveau }}</td>
+                        <td>{{ partie.nb_tours }}</td>
+                        <td>{{ partie.joueur_navires_coules }}</td>
+                        <td>{{ partie.joueur_navires_touches }}</td>
+                        <td>{{ partie.adversaire_navires_coules }}</td>
+                        <td>{{ partie.adversaire_navires_touches }}</td>
+                        <td>
+                            <button type="button">Reprendre</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Vous n'avez aucune partie en cours.</p>
+    {% endif %}
+    {% endif %}
 {% endblock %}

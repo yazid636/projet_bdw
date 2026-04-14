@@ -2,7 +2,7 @@
 
 {% block main_content %}
 
-    <h2>Rechercher votre pseudo</h2>
+    <h2>Rechercher un joueur humain</h2>
     
     <form method="post">	
         <input type="text" name="recherche" id="id_valeur" placeholder="pseudo" required />
@@ -24,7 +24,8 @@
         {% endif %}
     {% endif %}
 
-    <h2>Créer un nouveau compte</h2>
+    <h2>Créer un joueur humain</h2>
+
     <form method="post">
         <label for="nouveau_pseudo">Pseudo</label><br>
         <input type="text" name="nouveau_pseudo" id="nouveau_pseudo" placeholder="Pseudo" required /><br><br>
@@ -38,7 +39,7 @@
         <label for="nouvelle_ddn">Date de naissance</label><br>
         <input type="date" name="nouvelle_ddn" id="nouvelle_ddn" required /><br><br>
 
-        <input type="submit" name="ajouter_joueur" value="Créer le compte"/>
+        <input type="submit" name="ajouter_joueur" value="Créer joueur humain">
     </form>
 
     {% if REQUEST_VARS.erreur_creation %}
