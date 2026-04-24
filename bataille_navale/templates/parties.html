@@ -2,91 +2,97 @@
 
 {% block main_content %}
     {% if not REQUEST_VARS.joueur_connecte %}
-        <p>Vous devez vous connecter pour accéder aux parties.</p>
+        <p>Vous devez vous connecter pour acceder aux parties.</p>
     {% elif not REQUEST_VARS.joueur_humain %}
-        <p>Seul un joueur humain peut créer ou reprendre des parties. Connectez-vous avec un joueur humain.</p>
+        <p>Seul un joueur humain peut creer ou reprendre des parties. Connectez-vous avec un joueur humain.</p>
     {% else %}
-    {% if REQUEST_VARS.erreur_creation %}
-        <div class="alert-error">{{ REQUEST_VARS.erreur_creation }}</div>
-    {% endif %}
-    <h2>Créer une nouvelle partie</h2>
+        {% if REQUEST_VARS.erreur_creation %}
+            <div class="alert-error">{{ REQUEST_VARS.erreur_creation }}</div>
+        {% endif %}
+        {% include "message.html" %}
 
-    <div id="nouvelle_partie">
-        <p>
+        {% if REQUEST_VARS.partie_creee_id %}
+            <p>
+                <a class="btn-lien" href="/jeu?id_partie={{ REQUEST_VARS.partie_creee_id }}">Jouer la nouvelle partie</a>
+            </p>
+        {% endif %}
+
+        <h2>Creer une nouvelle partie</h2>
+
+        <div id="nouvelle_partie">
             <div class="colonne">
-                <h3>Séléctionnez un adversaire pour votre partie</h3>
+                <h3>Selectionnez un adversaire</h3>
                 <form method="post">
-                        {% for joueur in REQUEST_VARS.joueurs_virtuels %}
-                            <input type="radio" name="id_virtuel" value="{{ joueur[1] }}"><label>{{ joueur[0] }}</label><br>
-                        {% endfor %}
+                    {% for joueur in REQUEST_VARS.joueurs_virtuels %}
+                        <label class="ligne-radio">
+                            <input type="radio" name="id_virtuel" value="{{ joueur[1] }}">
+                            {{ joueur[0] }}
+                        </label>
+                    {% endfor %}
                     <br>
-                    <input type="submit" name="creer_partie" value="Créer partie">
+                    <input type="submit" name="creer_partie" value="Creer partie">
                 </form>
             </div>
-        </p>
 
-        <p>
             <div class="colonne">
-                <h3>Créer un adversaire</h3>
+                <h3>Creer un adversaire virtuel</h3>
                 <form method="post">
                     <label for="nouveau_pseudo">Pseudo</label><br>
-                    <input type="text" name="nouveau_pseudo" id="nouveau_pseudo" placeholder="Pseudo" required /><br><br>
+                    <input type="text" name="nouveau_pseudo" id="nouveau_pseudo" placeholder="Pseudo" required><br><br>
 
-                    <label for="niveau">Niveau</label>
+                    <label for="niveau">Niveau</label><br>
                     <select name="niveau" id="niveau">
                         <option value="novice">Novice</option>
-                        <option value="intermediaire">Intermédiaire</option>
+                        <option value="intermediaire">Intermediaire</option>
                         <option value="expert">Expert</option>
                     </select>
                     <br><br>
 
-                    <input type="submit" name="ajouter_virtuel" value="Créer joueur virtuel">
-
+                    <input type="submit" name="ajouter_virtuel" value="Creer joueur virtuel">
                 </form>
             </div>
-        </p>
-    </div>
+        </div>
 
-
-
-
-    <br>
-    <h2>Vos parties en cours</h2>
-    {% if REQUEST_VARS.parties_en_cours %}
-        <table id="table_parties">
-            <thead>
-                <tr>
-                    <th>Date et heure de creation</th>
-                    <th>Adversaire</th>
-                    <th>Niveau de l'adversaire</th>
-                    <th>Nombre de tours</th>
-                    <th>Vos navires coules</th>
-                    <th>Vos navires touches</th>
-                    <th>Navires adverses coules</th>
-                    <th>Navires adverses touches</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for partie in REQUEST_VARS.parties_en_cours %}
+        <h2>Vos parties en cours</h2>
+        {% if REQUEST_VARS.parties_en_cours %}
+            <table id="table_parties">
+                <thead>
                     <tr>
-                        <td>{{ partie.creation_affichage }}</td>
-                        <td>{{ partie.adversaire_pseudo }}</td>
-                        <td>{{ partie.adversaire_niveau }}</td>
-                        <td>{{ partie.nb_tours }}</td>
-                        <td>{{ partie.joueur_navires_coules }}</td>
-                        <td>{{ partie.joueur_navires_touches }}</td>
-                        <td>{{ partie.adversaire_navires_coules }}</td>
-                        <td>{{ partie.adversaire_navires_touches }}</td>
-                        <td>
-                            <button type="button">Reprendre</button>
-                        </td>
+                        <th>Partie</th>
+                        <th>Date et heure de creation</th>
+                        <th>Adversaire</th>
+                        <th>Niveau</th>
+                        <th>Etat</th>
+                        <th>Nombre de tours</th>
+                        <th>Vos navires coules</th>
+                        <th>Vos navires touches</th>
+                        <th>Navires adverses coules</th>
+                        <th>Navires adverses touches</th>
+                        <th>Action</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>Vous n'avez aucune partie en cours.</p>
-    {% endif %}
+                </thead>
+                <tbody>
+                    {% for partie in REQUEST_VARS.parties_en_cours %}
+                        <tr>
+                            <td>#{{ partie.id_partie }}</td>
+                            <td>{{ partie.creation_affichage }}</td>
+                            <td>{{ partie.adversaire_pseudo }}</td>
+                            <td>{{ partie.adversaire_niveau }}</td>
+                            <td>{{ partie.etat or "cree" }}</td>
+                            <td>{{ partie.nb_tours }}</td>
+                            <td>{{ partie.joueur_navires_coules }}</td>
+                            <td>{{ partie.joueur_navires_touches }}</td>
+                            <td>{{ partie.adversaire_navires_coules }}</td>
+                            <td>{{ partie.adversaire_navires_touches }}</td>
+                            <td>
+                                <a class="btn-lien" href="/jeu?id_partie={{ partie.id_partie }}">Reprendre</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Vous n'avez aucune partie en cours.</p>
+        {% endif %}
     {% endif %}
 {% endblock %}

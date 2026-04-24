@@ -1,1 +1,164 @@
-<h1>Hello world</h1>
+{% extends "base.html" %}
+
+{% macro afficher_grille(grille, titre) %}
+    <div class="bloc-grille">
+        <h3>{{ titre }}</h3>
+        <table class="table-grille">
+            <thead>
+                <tr>
+                    <th></th>
+                    {% for colonne in grille.colonnes %}
+                        <th>{{ colonne }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for ligne in grille.lignes %}
+                    <tr>
+                        <th>{{ ligne.numero }}</th>
+                        {% for cellule in ligne.cellules %}
+                            <td class="{{ cellule.classes }}">{{ cellule.label }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endmacro %}
+
+{% block main_content %}
+    {% if REQUEST_VARS.erreur %}
+        <div class="alert-error">{{ REQUEST_VARS.erreur }}</div>
+    {% endif %}
+
+    {% include "message.html" %}
+
+    {% if REQUEST_VARS.jeu %}
+        <h2>Partie #{{ REQUEST_VARS.jeu.id_partie }}</h2>
+        <p>
+            Adversaire : <strong>{{ REQUEST_VARS.jeu.adversaire_pseudo }}</strong>
+            ({{ REQUEST_VARS.jeu.adversaire_niveau }})
+        </p>
+        <p>Etat de la partie : <strong>{{ REQUEST_VARS.jeu.etat_partie }}</strong></p>
+        <p>
+            Numero de tour :
+            <strong>
+                {% if REQUEST_VARS.jeu.tour_courant > 0 %}
+                    {{ REQUEST_VARS.jeu.tour_courant }}
+                {% else %}
+                    0
+                {% endif %}
+            </strong>
+        </p>
+
+        {% if REQUEST_VARS.jeu.resultat_partie %}
+            <div class="alert-success">{{ REQUEST_VARS.jeu.resultat_partie }}</div>
+        {% endif %}
+
+        {% if REQUEST_VARS.jeu.carte_joueur %}
+            <section class="bloc-carte">
+                <h3>Carte du joueur</h3>
+                {% if REQUEST_VARS.jeu.carte_joueur.image %}
+                    <img
+                        class="image-carte"
+                        src="{{ REQUEST_VARS.jeu.carte_joueur.image }}"
+                        alt="Image de la carte {{ REQUEST_VARS.jeu.carte_joueur.nom }}"
+                    >
+                {% endif %}
+                <p><strong>{{ REQUEST_VARS.jeu.carte_joueur.nom }}</strong></p>
+                <p>{{ REQUEST_VARS.jeu.carte_joueur.description }}</p>
+                {% if REQUEST_VARS.jeu.carte_joueur.effet_message %}
+                    <p class="info-tour">{{ REQUEST_VARS.jeu.carte_joueur.effet_message }}</p>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        {% if REQUEST_VARS.jeu.carte_adversaire %}
+            <section class="bloc-carte carte-adverse">
+                <h3>Carte de l'adversaire</h3>
+                {% if REQUEST_VARS.jeu.carte_adversaire.image %}
+                    <img
+                        class="image-carte"
+                        src="{{ REQUEST_VARS.jeu.carte_adversaire.image }}"
+                        alt="Image de la carte {{ REQUEST_VARS.jeu.carte_adversaire.nom }}"
+                    >
+                {% endif %}
+                <p><strong>{{ REQUEST_VARS.jeu.carte_adversaire.nom }}</strong></p>
+                <p>{{ REQUEST_VARS.jeu.carte_adversaire.description }}</p>
+                {% if REQUEST_VARS.jeu.dernier_tir_adversaire and REQUEST_VARS.jeu.dernier_tir_adversaire.effet_message %}
+                    <p class="info-tour">{{ REQUEST_VARS.jeu.dernier_tir_adversaire.effet_message }}</p>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <div class="zone-grilles">
+            {{ afficher_grille(REQUEST_VARS.jeu.grille_joueur, "Votre grille navires") }}
+            {{ afficher_grille(REQUEST_VARS.jeu.grille_tirs, "Votre grille de tirs") }}
+        </div>
+
+        {% if REQUEST_VARS.jeu.verification_vide %}
+            <div class="alert-warning">{{ REQUEST_VARS.jeu.verification_vide }}</div>
+        {% endif %}
+
+        {% if REQUEST_VARS.jeu.messages_joueur %}
+            <div class="bloc-evenement">
+                <h3>Dernier tir du joueur</h3>
+                {% for message in REQUEST_VARS.jeu.messages_joueur %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if REQUEST_VARS.jeu.messages_adversaire %}
+            <div class="bloc-evenement adverse">
+                <h3>Dernier tir de l'adversaire</h3>
+                {% for message in REQUEST_VARS.jeu.messages_adversaire %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" action="/jeu" class="form-jeu">
+            <input type="hidden" name="id_partie" value="{{ REQUEST_VARS.jeu.id_partie }}">
+
+            {% if REQUEST_VARS.jeu.afficher_commencer %}
+                <input type="submit" name="commencer_partie" value="{% if REQUEST_VARS.jeu.partie_commencee %}Continuer la partie{% else %}Commencer la partie{% endif %}">
+            {% endif %}
+
+            {% if REQUEST_VARS.jeu.afficher_tirer %}
+                {% if REQUEST_VARS.jeu.coordonnees_requises %}
+                    <label for="coordonnee">Coordonnees de tir</label><br>
+                    <input type="text" name="coordonnee" id="coordonnee" placeholder="A5" autocomplete="off">
+                    <br><br>
+                {% else %}
+                    <p>Cette carte ne demande pas de coordonnees pour ce tour.</p>
+                {% endif %}
+
+                {% if REQUEST_VARS.jeu.afficher_verifier %}
+                    <input type="submit" name="verifier_case" value="Verifier la case">
+                {% endif %}
+                <input type="submit" name="tirer" value="Tirer">
+            {% endif %}
+
+            {% if REQUEST_VARS.jeu.afficher_suivant %}
+                <input type="submit" name="suivant" value="Suivant">
+            {% endif %}
+
+            {% if REQUEST_VARS.jeu.afficher_suspendre %}
+                <input type="submit" name="suspendre_partie" value="Suspendre la partie">
+            {% endif %}
+        </form>
+
+        <section class="bloc-legende">
+            <h3>Legende</h3>
+            <p><strong>N</strong> : navire intact</p>
+            <p><strong>X</strong> : navire touche</p>
+            <p><strong>C</strong> : navire coule</p>
+            <p><strong>o</strong> : tir a l'eau</p>
+            <p><strong>L</strong> : leurre actif</p>
+            <p><strong>W</strong> : Willy</p>
+        </section>
+    {% else %}
+        <p>Aucune partie n'est disponible pour le moment.</p>
+    {% endif %}
+{% endblock %}

@@ -144,3 +144,128 @@ footer {
 #table_parties tbody tr:nth-child(even) {
     background-color: #f7fbfd;
 }
+
+.btn-lien {
+    display: inline-block;
+    padding: 0.5rem 0.9rem;
+    background-color: #3179ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.35rem;
+}
+
+.btn-lien:visited {
+    color: white;
+}
+
+.ligne-radio {
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.zone-grilles {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin: 1.5rem 0;
+}
+
+.bloc-grille {
+    min-width: 23rem;
+}
+
+.table-grille {
+    border-collapse: collapse;
+    background-color: white;
+}
+
+.table-grille th,
+.table-grille td {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid #bfc7d2;
+    text-align: center;
+}
+
+.grille-case {
+    font-weight: bold;
+}
+
+.cell-mer,
+.cell-inconnu {
+    background-color: #e8f5fb;
+}
+
+.cell-navire {
+    background-color: #8fb6c9;
+    color: #0e2433;
+}
+
+.cell-touche {
+    background-color: #ffb36b;
+    color: #5a1c00;
+}
+
+.cell-coule {
+    background-color: #ef6b6b;
+    color: white;
+}
+
+.cell-eau {
+    background-color: #dbe9f2;
+    color: #2e5974;
+}
+
+.cell-leurre {
+    background-color: #fff4b0;
+    color: #5f5000;
+}
+
+.cell-willy {
+    background-color: #c9f3d0;
+    color: #165224;
+}
+
+.bloc-carte,
+.bloc-evenement,
+.bloc-legende {
+    background-color: white;
+    border: 1px solid #d6dde8;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.carte-adverse,
+.bloc-evenement.adverse {
+    background-color: #f5fbff;
+}
+
+.image-carte {
+    display: block;
+    width: 12rem;
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+    border: 1px solid #c8d2df;
+    background-color: black;
+}
+
+.form-jeu {
+    margin: 1.5rem 0;
+}
+
+.form-jeu input[type="text"] {
+    width: 10rem;
+    padding: 0.4rem;
+}
+
+.form-jeu input[type="submit"] {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.info-tour {
+    color: #165224;
+    font-weight: bold;
+}

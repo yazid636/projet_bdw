@@ -6,6 +6,9 @@ model_pg = importlib.reload(model_pg)
 REQUEST_VARS['joueurs_virtuels'] = []
 REQUEST_VARS['parties_en_cours'] = []
 REQUEST_VARS['erreur_creation'] = None
+REQUEST_VARS['message'] = None
+REQUEST_VARS['message_class'] = None
+REQUEST_VARS['partie_creee_id'] = None
 REQUEST_VARS['joueur_connecte'] = bool(SESSION.get('JOUEUR_ID'))
 REQUEST_VARS['joueur_humain'] = False
 
@@ -46,6 +49,8 @@ if REQUEST_VARS['joueur_connecte']:
                         (nouveau_id, niveau, id_createur)
                     )
                     REQUEST_VARS['joueurs_virtuels'] = model_pg.get_joueurs_virtuels(SESSION['CONNEXION'])
+                    REQUEST_VARS['message'] = f"Le joueur virtuel {nouveau_pseudo} a bien ete cree."
+                    REQUEST_VARS['message_class'] = "alert-success"
 
         if POST and 'creer_partie' in POST:
             id_humain = SESSION.get('JOUEUR_ID')
@@ -54,7 +59,13 @@ if REQUEST_VARS['joueur_connecte']:
             if not id_virtuel:
                 REQUEST_VARS['erreur_creation'] = "Vous devez sélectionner un adversaire."
             else:
-                model_pg.create_partie(SESSION['CONNEXION'], id_humain, id_virtuel)
+                try:
+                    id_partie = model_pg.create_partie(SESSION['CONNEXION'], id_humain, id_virtuel)
+                    REQUEST_VARS['partie_creee_id'] = id_partie
+                    REQUEST_VARS['message'] = f"La partie {id_partie} a bien ete creee."
+                    REQUEST_VARS['message_class'] = "alert-success"
+                except ValueError as exc:
+                    REQUEST_VARS['erreur_creation'] = str(exc)
 
         REQUEST_VARS['parties_en_cours'] = model_pg.get_parties_en_cours(
             SESSION['CONNEXION'],
