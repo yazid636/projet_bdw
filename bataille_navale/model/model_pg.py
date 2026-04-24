@@ -1815,3 +1815,100 @@ def get_parties_en_cours(connexion, joueur_id):
             else:
                 partie["creation_affichage"] = f"Heure {heure_str[:2]}h{heure_str[2:]}"
     return parties
+
+
+def get_classement_ijh(connexion, delta_mois=0):
+    """
+    Classement individuel joueurs humains (IJH)
+    """
+
+    if delta_mois == 0:
+        query = """
+            SELECT
+                j.pseudo,
+                j.id_joueur,
+                COALESCE(SUM(p.score_final), 0) AS score_total,
+                COUNT(DISTINCT p.id_partie) AS nb_parties
+            FROM humain h
+            JOIN joueur j ON h.id_joueur = j.id_joueur
+            LEFT JOIN partie p
+                ON p.id_humain = h.id_joueur
+               AND p.score_final IS NOT NULL
+            GROUP BY j.id_joueur, j.pseudo
+            ORDER BY score_total DESC, nb_parties DESC
+        """
+        params = []
+
+    else:
+        query = """
+            SELECT
+                j.pseudo,
+                j.id_joueur,
+                COALESCE(SUM(p.score_final), 0) AS score_total,
+                COUNT(DISTINCT p.id_partie) AS nb_parties
+            FROM humain h
+            JOIN joueur j ON h.id_joueur = j.id_joueur
+            LEFT JOIN partie p
+                ON p.id_humain = h.id_joueur
+               AND p.score_final IS NOT NULL
+            LEFT JOIN sequence_temporelle st
+                ON st.id_partie = p.id_partie
+               AND st.date_debut >= CURRENT_DATE - make_interval(months => %s)
+            GROUP BY j.id_joueur, j.pseudo
+            ORDER BY score_total DESC, nb_parties DESC
+        """
+        params = [delta_mois]
+
+    with connexion.cursor(row_factory=dict_row) as cur:
+        cur.execute(query, params)
+        return cur.fetchall()
+
+def get_classement_cpp(connexion, delta_mois=0):
+    """
+    Classement par pavillon (CPP)
+    """
+
+    if delta_mois == 0:
+        query = """
+            SELECT
+                f.pavillon,
+                COALESCE(SUM(p.score_final), 0) AS score_total,
+                COUNT(DISTINCT p.id_partie) AS nb_parties,
+                COUNT(DISTINCT p.id_humain) AS nb_joueurs
+            FROM flotille f
+            JOIN partie p
+                ON p.id_partie = f.id_partie
+               AND p.score_final IS NOT NULL
+            JOIN humain h
+                ON h.id_joueur = p.id_humain
+            WHERE LOWER(TRIM(f.pavillon)) != 'coalition'
+            GROUP BY f.pavillon
+            ORDER BY score_total DESC, nb_parties DESC
+        """
+        params = []
+
+    else:
+        query = """
+            SELECT
+                f.pavillon,
+                COALESCE(SUM(p.score_final), 0) AS score_total,
+                COUNT(DISTINCT p.id_partie) AS nb_parties,
+                COUNT(DISTINCT p.id_humain) AS nb_joueurs
+            FROM flotille f
+            JOIN partie p
+                ON p.id_partie = f.id_partie
+               AND p.score_final IS NOT NULL
+            JOIN humain h
+                ON h.id_joueur = p.id_humain
+            LEFT JOIN sequence_temporelle st
+                ON st.id_partie = p.id_partie
+               AND st.date_debut >= CURRENT_DATE - make_interval(months => %s)
+            WHERE LOWER(TRIM(f.pavillon)) != 'coalition'
+            GROUP BY f.pavillon
+            ORDER BY score_total DESC, nb_parties DESC
+        """
+        params = [delta_mois]
+
+    with connexion.cursor(row_factory=dict_row) as cur:
+        cur.execute(query, params)
+        return cur.fetchall()

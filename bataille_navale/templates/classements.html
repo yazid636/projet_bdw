@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+
+{% block main_content %}
+
+
+<h1>Classements des joueurs</h1>
+
+<form method="GET" action="classements">
+    <label for="delta">Période (mois) :</label>
+    <select name="delta" id="delta">
+        <option value="0" {% if delta_mois == 0 %}selected{% endif %}>Toutes les parties</option>
+        <option value="1" {% if delta_mois == 1 %}selected{% endif %}>1 mois</option>
+        <option value="3" {% if delta_mois == 3 %}selected{% endif %}>3 mois</option>
+        <option value="6" {% if delta_mois == 6 %}selected{% endif %}>6 mois</option>
+        <option value="12" {% if delta_mois == 12 %}selected{% endif %}>12 mois</option>
+    </select>
+    <button type="submit">Actualiser</button>
+</form>
+
+<h2>Classement IJH</h2>
+
+{% if REQUEST_VARS['classement_ijh'] and REQUEST_VARS['classement_ijh']|length > 0 %}
+<table>
+    <tr>
+        <th>Rang</th>
+        <th>Pseudo</th>
+        <th>Score</th>
+        <th>Parties</th>
+    </tr>
+
+    {% for j in REQUEST_VARS['classement_ijh'] %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ j.pseudo }}</td>
+        <td>{{ j.score_total }}</td>
+        <td>{{ j.nb_parties }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>Aucun classement IJH disponible.</p>
+{% endif %}
+
+<h2>Classement CPP</h2>
+
+{% if REQUEST_VARS['classement_cpp'] and REQUEST_VARS['classement_cpp']|length > 0 %}
+<table>
+    <tr>
+        <th>Rang</th>
+        <th>Pavillon</th>
+        <th>Score</th>
+        <th>Parties</th>
+        <th>Joueurs</th>
+    </tr>
+
+    {% for c in REQUEST_VARS['classement_cpp'] %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ c.pavillon }}</td>
+        <td>{{ c.score_total }}</td>
+        <td>{{ c.nb_parties }}</td>
+        <td>{{ c.nb_joueurs }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>Aucun classement CPP disponible.</p>
+{% endif %}
+
+{% endblock %}
