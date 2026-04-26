@@ -8,18 +8,71 @@
     Vous pouvez jouer à la bataille navale contre un adversaire virtuel
     et retrouver vos parties en cours.
     <br>
-    Utilisez le menu a gauche pour acceder a la connexion, aux parties et au jeu.
+    Utilisez le menu à gauche pour accéder à la connexion, aux parties et au jeu.
+</p>
+
+<h2>Règles et Cartes</h2>
+
+<p>
+    Chaque joueur possède deux grilles de 10 par 10 : une grille avec ses navires
+    et une grille pour suivre ses tirs. Le premier joueur qui coule tous les
+    navires adverses gagne la partie.
+    <br>
+    Avant chaque tour, une carte est tirée. Elle peut modifier le tir classique :
+    rejouer une fois, vérifier si une case est vide, protéger un navire touché,
+    placer un leurre, placer Willy, tirer sur une zone de 9 cases ou de 25 cases.
+    Certaines cartes sont des pièges : passer son tour ou toucher par accident sa
+    propre flotte.
 </p>
 
 {% if SESSION.PSEUDO %}
+    <h2>Statistiques de {{ SESSION.PSEUDO }}</h2>
+
+    <p>
+        Parties finies sur les trois derniers mois :
+        <strong>{{ REQUEST_VARS.stats_accueil.parties_finies_3_mois }}</strong>
+    </p>
+
     {% if REQUEST_VARS.moyenne_tours is not none %}
-        <p>
-            Nombre moyen de tours par partie pour <strong>{{ SESSION.PSEUDO }}</strong> : 
-            <strong>{{ REQUEST_VARS.moyenne_tours }}</strong>
-        </p>
+        <p>Nombre moyen de tours par partie : <strong>{{ REQUEST_VARS.moyenne_tours }}</strong></p>
     {% else %}
-        <p>{{ SESSION.PSEUDO }} n'a encore joué aucune partie.</p>
+        <p>Nombre moyen de tours par partie : aucune partie jouée.</p>
     {% endif %}
+
+    <p>
+        Points cumulés sur les parties avec une séquence en 2026 :
+        <strong>{{ REQUEST_VARS.stats_accueil.points_2026 }}</strong>
+    </p>
+
+    <p>
+        Carte "Étoile de la mort" tirée sur les 10 dernières parties commencées :
+        <strong>{{ REQUEST_VARS.stats_accueil.etoile_10_dernieres }}</strong>
+    </p>
+
+    <h3>Parties gagnées par niveau adverse</h3>
+    {% if REQUEST_VARS.stats_accueil.victoires_par_niveau %}
+        <ul>
+            {% for ligne in REQUEST_VARS.stats_accueil.victoires_par_niveau %}
+                <li>{{ ligne.niveau }} : {{ ligne.nb }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune partie gagnée.</p>
+    {% endif %}
+
+    <h3>Cartes tirées par type</h3>
+    {% if REQUEST_VARS.stats_accueil.cartes_par_type %}
+        <ul>
+            {% for ligne in REQUEST_VARS.stats_accueil.cartes_par_type %}
+                <li>{{ ligne.nom }} : {{ ligne.nb }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune carte tirée.</p>
+    {% endif %}
+    <form method="post" action="/deconnexion">
+        <input type="submit" value="Se déconnecter">
+    </form>
 {% endif %}
 
 {% endblock %}

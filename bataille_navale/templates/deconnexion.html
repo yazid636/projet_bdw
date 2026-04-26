@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<h2>Déconnexion</h2>
+
+<p>{{ REQUEST_VARS.message }}</p>
+<form method="get" action="/">
+    <input type="submit" value="Retour à l'accueil">
+</form>
+{% endblock %}

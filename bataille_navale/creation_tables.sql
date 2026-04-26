@@ -79,6 +79,7 @@ CREATE TABLE PARTIE (
   id_virtuel        int,
   id_pioche int,
   id_gagnant int,
+  etat_jeu TEXT,
   PRIMARY KEY (id_partie),
   FOREIGN KEY (id_humain) REFERENCES HUMAIN(id_joueur),
   FOREIGN KEY (id_virtuel) REFERENCES VIRTUEL(id_joueur),
@@ -89,6 +90,12 @@ CREATE TABLE PARTIE (
 CREATE TABLE TOUR (
   num_tour  int ,
   id_partie int,
+  joueur_navires_coules int DEFAULT 0,
+  joueur_navires_touches int DEFAULT 0,
+  joueur_cases_a_explorer int DEFAULT 100,
+  adversaire_navires_coules int DEFAULT 0,
+  adversaire_navires_touches int DEFAULT 0,
+  adversaire_cases_a_explorer int DEFAULT 100,
   PRIMARY KEY (num_tour, id_partie),
   FOREIGN KEY (id_partie) REFERENCES PARTIE(id_partie)
 );
@@ -185,8 +192,8 @@ INSERT INTO HUMAIN (id_joueur, nom, prenom, date_de_naissance, date_de_creation)
 
 INSERT INTO VIRTUEL (id_joueur, niveau, date_creation, id_createur) VALUES
   (2, 'expert', '2026-03-03', 1),
-  (3, 'novice', '2026-03-04', 4),
-  (5, 'novice', '2026-03-06', 4),
+  (3, 'faible', '2026-03-04', 4),
+  (5, 'faible', '2026-03-06', 4),
   (6, 'intermediaire', '2026-03-07', 7),
   (10, 'expert', '2026-03-11', 11);
 
@@ -347,3 +354,15 @@ INSERT INTO TIR (num_tir, num_tour, id_partie, id_carte, id_joueur, x, y) VALUES
   (2, 2, 52, 60, 3, 8, 2),
   (1, 1, 63, 18, 4, 4, 6),
   (2, 1, 63, 50, 3, 6, 3);
+
+
+UPDATE TYPE_CARTE SET image = '/bataille_navale/static/img/carte1.png' WHERE code = 1;
+UPDATE TYPE_CARTE SET image = '/bataille_navale/static/img/carte2.png' WHERE code = 2;
+UPDATE TYPE_CARTE SET image = '/bataille_navale/static/img/carte3.png' WHERE code = 3;
+UPDATE TYPE_CARTE SET image = '/bataille_navale/static/img/carte4.png' WHERE code = 4;
+UPDATE TYPE_CARTE SET image = '/bataille_navale/static/img/carte5.png' WHERE code = 5;
+UPDATE TYPE_CARTE SET image = '/bataille_navale/static/img/carte6.png' WHERE code = 6;
+UPDATE TYPE_CARTE SET image = '/bataille_navale/static/img/carte7.png' WHERE code = 7;
+UPDATE TYPE_CARTE SET image = '/bataille_navale/static/img/carte8.png' WHERE code = 8;
+UPDATE TYPE_CARTE SET image = '/bataille_navale/static/img/carte9.png' WHERE code = 9;
+UPDATE TYPE_CARTE SET image = '/bataille_navale/static/img/carte10.png' WHERE code = 10;

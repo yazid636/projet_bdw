@@ -17,7 +17,7 @@
                     <tr>
                         <th>{{ ligne.numero }}</th>
                         {% for cellule in ligne.cellules %}
-                            <td class="{{ cellule.classes }}">{{ cellule.label }}</td>
+                            <td class="{{ cellule.classes }}"></td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
@@ -39,9 +39,9 @@
             Adversaire : <strong>{{ REQUEST_VARS.jeu.adversaire_pseudo }}</strong>
             ({{ REQUEST_VARS.jeu.adversaire_niveau }})
         </p>
-        <p>Etat de la partie : <strong>{{ REQUEST_VARS.jeu.etat_partie }}</strong></p>
+        <p>État de la partie : <strong>{{ REQUEST_VARS.jeu.etat_partie }}</strong></p>
         <p>
-            Numero de tour :
+            Numéro de tour :
             <strong>
                 {% if REQUEST_VARS.jeu.tour_courant > 0 %}
                     {{ REQUEST_VARS.jeu.tour_courant }}
@@ -127,15 +127,15 @@
 
             {% if REQUEST_VARS.jeu.afficher_tirer %}
                 {% if REQUEST_VARS.jeu.coordonnees_requises %}
-                    <label for="coordonnee">Coordonnees de tir</label><br>
+                    <label for="coordonnee">Coordonnées de tir</label><br>
                     <input type="text" name="coordonnee" id="coordonnee" placeholder="A5" autocomplete="off">
                     <br><br>
                 {% else %}
-                    <p>Cette carte ne demande pas de coordonnees pour ce tour.</p>
+                    <p>Cette carte ne demande pas de coordonnées pour ce tour.</p>
                 {% endif %}
 
                 {% if REQUEST_VARS.jeu.afficher_verifier %}
-                    <input type="submit" name="verifier_case" value="Verifier la case">
+                    <input type="submit" name="verifier_case" value="Vérifier la case">
                 {% endif %}
                 <input type="submit" name="tirer" value="Tirer">
             {% endif %}
@@ -150,13 +150,11 @@
         </form>
 
         <section class="bloc-legende">
-            <h3>Legende</h3>
-            <p><strong>N</strong> : navire intact</p>
-            <p><strong>X</strong> : navire touche</p>
-            <p><strong>C</strong> : navire coule</p>
-            <p><strong>o</strong> : tir a l'eau</p>
-            <p><strong>L</strong> : leurre actif</p>
-            <p><strong>W</strong> : Willy</p>
+            <h3>Légende</h3>
+            <p><span class="legende-image cell-navire"></span>Navire intact, leurre ou Willy</p>
+            <p><span class="legende-image cell-touche"></span>Navire touché ou coulé</p>
+            <p><span class="legende-image cell-eau"></span>Tir à l'eau</p>
+            <p><span class="legende-image cell-inconnu"></span>Case non explorée</p>
         </section>
     {% else %}
         <p>Aucune partie n'est disponible pour le moment.</p>

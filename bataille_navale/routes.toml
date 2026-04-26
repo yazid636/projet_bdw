@@ -9,29 +9,14 @@ controleur = "controleurs/accueil.py"
 template = "accueil.html"
 
 [[routes]]
-url = "afficher"
-controleur = "controleurs/afficher.py"
-template = "afficher.html"
-
-[[routes]]
-url = "rechercher"
-controleur = "controleurs/rechercher.py"
-template = "rechercher.html"
-
-[[routes]]
-url = "historique"
-controleur = "controleurs/historique.py"
-template = "historique.html"
-
-[[routes]]
-url = "ajouter"
-controleur = "controleurs/ajouter.py"
-template = "ajouter.html"
-
-[[routes]]
 url = "connexion"
 controleur = "controleurs/connexion.py"
 template = "connexion.html"
+
+[[routes]]
+url = "deconnexion"
+controleur = "controleurs/deconnexion.py"
+template = "deconnexion.html"
 
 [[routes]]
 url = "parties"
@@ -47,3 +32,8 @@ template = "jeu.html"
 url = "classements"
 controleur = "controleurs/classements.py"
 template = "classements.html"
+
+[[routes]]
+url = "plan-site"
+controleur = "controleurs/plan_site.py"
+template = "plan_site.html"

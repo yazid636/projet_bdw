@@ -21,22 +21,26 @@
 <h2>Classement IJH</h2>
 
 {% if REQUEST_VARS['classement_ijh'] and REQUEST_VARS['classement_ijh']|length > 0 %}
-<table>
-    <tr>
-        <th>Rang</th>
-        <th>Pseudo</th>
-        <th>Score</th>
-        <th>Parties</th>
-    </tr>
+<table class="table-classement">
+    <thead>
+        <tr>
+            <th>Rang</th>
+            <th>Pseudo</th>
+            <th>Score</th>
+            <th>Parties</th>
+        </tr>
+    </thead>
 
-    {% for j in REQUEST_VARS['classement_ijh'] %}
-    <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ j.pseudo }}</td>
-        <td>{{ j.score_total }}</td>
-        <td>{{ j.nb_parties }}</td>
-    </tr>
-    {% endfor %}
+    <tbody>
+        {% for j in REQUEST_VARS['classement_ijh'] %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ j.pseudo }}</td>
+                <td>{{ j.score_total }}</td>
+                <td>{{ j.nb_parties }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% else %}
 <p>Aucun classement IJH disponible.</p>
@@ -45,24 +49,28 @@
 <h2>Classement CPP</h2>
 
 {% if REQUEST_VARS['classement_cpp'] and REQUEST_VARS['classement_cpp']|length > 0 %}
-<table>
-    <tr>
-        <th>Rang</th>
-        <th>Pavillon</th>
-        <th>Score</th>
-        <th>Parties</th>
-        <th>Joueurs</th>
-    </tr>
+<table class="table-classement">
+    <thead>
+        <tr>
+            <th>Rang</th>
+            <th>Pavillon</th>
+            <th>Score</th>
+            <th>Parties</th>
+            <th>Joueurs</th>
+        </tr>
+    </thead>
 
-    {% for c in REQUEST_VARS['classement_cpp'] %}
-    <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ c.pavillon }}</td>
-        <td>{{ c.score_total }}</td>
-        <td>{{ c.nb_parties }}</td>
-        <td>{{ c.nb_joueurs }}</td>
-    </tr>
-    {% endfor %}
+    <tbody>
+        {% for c in REQUEST_VARS['classement_cpp'] %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ c.pavillon }}</td>
+                <td>{{ c.score_total }}</td>
+                <td>{{ c.nb_parties }}</td>
+                <td>{{ c.nb_joueurs }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% else %}
 <p>Aucun classement CPP disponible.</p>

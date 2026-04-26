@@ -11,6 +11,7 @@ REQUEST_VARS['message_class'] = None
 REQUEST_VARS['partie_creee_id'] = None
 REQUEST_VARS['joueur_connecte'] = bool(SESSION.get('JOUEUR_ID'))
 REQUEST_VARS['joueur_humain'] = False
+REQUEST_VARS['niveaux'] = ['faible', 'intermediaire', 'expert']
 
 if REQUEST_VARS['joueur_connecte']:
     REQUEST_VARS['joueur_humain'] = model_pg.is_humain(
@@ -19,7 +20,7 @@ if REQUEST_VARS['joueur_connecte']:
     )
 
     if REQUEST_VARS['joueur_humain']:
-        REQUEST_VARS['joueurs_virtuels'] = model_pg.get_joueurs_virtuels(SESSION['CONNEXION'])
+        REQUEST_VARS['joueurs_virtuels'] = model_pg.get_joueurs_virtuels_par_niveau(SESSION['CONNEXION'])
 
         if POST and 'ajouter_virtuel' in POST:
             nouveau_pseudo = POST.get('nouveau_pseudo', [None])[0]
@@ -48,7 +49,7 @@ if REQUEST_VARS['joueur_connecte']:
                         """,
                         (nouveau_id, niveau, id_createur)
                     )
-                    REQUEST_VARS['joueurs_virtuels'] = model_pg.get_joueurs_virtuels(SESSION['CONNEXION'])
+                    REQUEST_VARS['joueurs_virtuels'] = model_pg.get_joueurs_virtuels_par_niveau(SESSION['CONNEXION'])
                     REQUEST_VARS['message'] = f"Le joueur virtuel {nouveau_pseudo} a bien ete cree."
                     REQUEST_VARS['message_class'] = "alert-success"
 

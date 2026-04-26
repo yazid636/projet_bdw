@@ -214,7 +214,10 @@ def get_partie_infos(connexion, id_partie):
                 p.*,
                 jh.pseudo AS pseudo_humain,
                 jv.pseudo AS pseudo_virtuel,
-                v.niveau AS niveau_virtuel
+                CASE
+                    WHEN v.niveau = 'novice' THEN 'faible'
+                    ELSE v.niveau
+                END AS niveau_virtuel
             FROM partie p
             JOIN joueur jh ON jh.id_joueur = p.id_humain
             JOIN joueur jv ON jv.id_joueur = p.id_virtuel
@@ -1135,7 +1138,7 @@ def choose_ai_target(connexion, partie, state, carte):
         ship_cells.update(cells_from_navire(navire))
 
     explorees = get_attack_grid_explored(connexion, partie, id_ia)
-    niveau = (partie["niveau_virtuel"] or "novice").lower()
+    niveau = (partie["niveau_virtuel"] or "faible").lower()
     queue = [tuple(case) for case in state.get("ia_cibles", [])]
     queue = [case for case in queue if case not in explorees]
     state["ia_cibles"] = [[case[0], case[1]] for case in queue]
@@ -1656,6 +1659,116 @@ def get_moyenne_tours(conn, joueur_id):
     return None
 
 
+def get_stats_accueil(connexion, joueur_id):
+    """
+    Retourne les statistiques demandees sur la page d'accueil.
+    """
+    stats = {}
+
+    with connexion.cursor(row_factory=dict_row) as cur:
+        cur.execute(
+            """
+            SELECT COUNT(DISTINCT p.id_partie) AS nb
+            FROM partie p
+            WHERE p.id_humain = %s
+              AND p.score_final IS NOT NULL
+              AND EXISTS (
+                  SELECT 1
+                  FROM sequence_temporelle st
+                  WHERE st.id_partie = p.id_partie
+                    AND st.date_fin >= CURRENT_DATE - INTERVAL '3 months'
+              )
+            """,
+            (joueur_id,),
+        )
+        stats["parties_finies_3_mois"] = cur.fetchone()["nb"]
+
+        cur.execute(
+            """
+            SELECT niveau, COUNT(*) AS nb
+            FROM (
+                SELECT
+                    CASE
+                        WHEN v.niveau = 'novice' THEN 'faible'
+                        ELSE v.niveau
+                    END AS niveau
+                FROM partie p
+                JOIN virtuel v ON v.id_joueur = p.id_virtuel
+                WHERE p.id_humain = %s
+                  AND p.id_gagnant = p.id_humain
+            ) AS parties_gagnees
+            GROUP BY niveau
+            ORDER BY
+                CASE
+                    WHEN niveau = 'faible' THEN 1
+                    WHEN niveau = 'intermediaire' THEN 2
+                    WHEN niveau = 'expert' THEN 3
+                    ELSE 4
+                END
+            """,
+            (joueur_id,),
+        )
+        stats["victoires_par_niveau"] = cur.fetchall()
+
+        cur.execute(
+            """
+            SELECT COALESCE(SUM(p.score_final), 0) AS total
+            FROM partie p
+            WHERE p.id_humain = %s
+              AND p.score_final IS NOT NULL
+              AND EXISTS (
+                  SELECT 1
+                  FROM sequence_temporelle st
+                  WHERE st.id_partie = p.id_partie
+                    AND (
+                        EXTRACT(YEAR FROM st.date_debut) = 2026
+                        OR EXTRACT(YEAR FROM st.date_fin) = 2026
+                    )
+              )
+            """,
+            (joueur_id,),
+        )
+        stats["points_2026"] = cur.fetchone()["total"]
+
+        cur.execute(
+            """
+            SELECT tc.nom, COUNT(*) AS nb
+            FROM tir t
+            JOIN carte c ON c.id_carte = t.id_carte
+            JOIN type_carte tc ON tc.code = c.code
+            WHERE t.id_joueur = %s
+            GROUP BY c.code, tc.nom
+            ORDER BY c.code
+            """,
+            (joueur_id,),
+        )
+        stats["cartes_par_type"] = cur.fetchall()
+
+        cur.execute(
+            """
+            WITH dernieres_parties AS (
+                SELECT p.id_partie
+                FROM partie p
+                JOIN sequence_temporelle st ON st.id_partie = p.id_partie
+                GROUP BY p.id_partie
+                ORDER BY MIN(st.date_debut) DESC, MIN(st.heure_debut) DESC
+                LIMIT 10
+            )
+            SELECT COUNT(*) AS nb
+            FROM tir t
+            JOIN carte c ON c.id_carte = t.id_carte
+            WHERE c.code = 8
+              AND t.id_partie IN (
+                  SELECT id_partie FROM dernieres_parties
+              )
+            """,
+            (),
+        )
+        stats["etoile_10_dernieres"] = cur.fetchone()["nb"]
+
+    return stats
+
+
 def get_joueurs_virtuels(connexion):
     with connexion.cursor() as cur:
         cur.execute(
@@ -1664,6 +1777,32 @@ def get_joueurs_virtuels(connexion):
             FROM virtuel v
             JOIN joueur j ON v.id_joueur = j.id_joueur
             ORDER BY j.pseudo
+            """
+        )
+        return cur.fetchall()
+
+
+def get_joueurs_virtuels_par_niveau(connexion):
+    with connexion.cursor(row_factory=dict_row) as cur:
+        cur.execute(
+            """
+            SELECT
+                j.pseudo,
+                j.id_joueur,
+                CASE
+                    WHEN v.niveau = 'novice' THEN 'faible'
+                    ELSE v.niveau
+                END AS niveau
+            FROM virtuel v
+            JOIN joueur j ON v.id_joueur = j.id_joueur
+            ORDER BY
+                CASE
+                    WHEN v.niveau IN ('faible', 'novice') THEN 1
+                    WHEN v.niveau = 'intermediaire' THEN 2
+                    WHEN v.niveau = 'expert' THEN 3
+                    ELSE 4
+                END,
+                j.pseudo
             """
         )
         return cur.fetchall()
@@ -1760,7 +1899,10 @@ def get_parties_en_cours(connexion, joueur_id):
             dc.date_debut,
             dc.heure_debut,
             jv.pseudo AS adversaire_pseudo,
-            v.niveau AS adversaire_niveau,
+                CASE
+                    WHEN v.niveau = 'novice' THEN 'faible'
+                    ELSE v.niveau
+                END AS adversaire_niveau,
             COUNT(DISTINCT t.num_tour) AS nb_tours,
             COALESCE(sn_joueur.navires_coules, 0) AS joueur_navires_coules,
             COALESCE(sn_joueur.navires_touches, 0) AS joueur_navires_touches,
@@ -1789,7 +1931,10 @@ def get_parties_en_cours(connexion, joueur_id):
             dc.date_debut,
             dc.heure_debut,
             jv.pseudo,
-            v.niveau,
+            CASE
+                WHEN v.niveau = 'novice' THEN 'faible'
+                ELSE v.niveau
+            END,
             sn_joueur.navires_coules,
             sn_joueur.navires_touches,
             sn_adversaire.navires_coules,

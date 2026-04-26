@@ -123,7 +123,8 @@ footer {
     width: 50%;
 }
 
-#table_parties {
+#table_parties,
+.table-classement {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
@@ -131,17 +132,21 @@ footer {
 }
 
 #table_parties th,
-#table_parties td {
+#table_parties td,
+.table-classement th,
+.table-classement td {
     border: 1px solid #c9c9c9;
     padding: 0.75rem;
     text-align: left;
 }
 
-#table_parties th {
+#table_parties th,
+.table-classement th {
     background-color: #d9ebf2;
 }
 
-#table_parties tbody tr:nth-child(even) {
+#table_parties tbody tr:nth-child(even),
+.table-classement tbody tr:nth-child(even) {
     background-color: #f7fbfd;
 }
 
@@ -188,42 +193,44 @@ footer {
 }
 
 .grille-case {
-    font-weight: bold;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
-.cell-mer,
+.cell-mer {
+    background-image: url("/bataille_navale/static/img/Cellule_nonExploree1.png");
+}
+
 .cell-inconnu {
-    background-color: #e8f5fb;
+    background-image: url("/bataille_navale/static/img/Cellule_nonExploree1.png");
 }
 
-.cell-navire {
-    background-color: #8fb6c9;
-    color: #0e2433;
+.cell-navire,
+.cell-leurre,
+.cell-willy {
+    background-image: url("/bataille_navale/static/img/Cellule_navire.png");
 }
 
-.cell-touche {
-    background-color: #ffb36b;
-    color: #5a1c00;
-}
-
+.cell-touche,
 .cell-coule {
-    background-color: #ef6b6b;
-    color: white;
+    background-image: url("/bataille_navale/static/img/Cellule_touche.png");
 }
 
 .cell-eau {
-    background-color: #dbe9f2;
-    color: #2e5974;
+    background-image: url("/bataille_navale/static/img/Cellule_aLeau.png");
 }
 
-.cell-leurre {
-    background-color: #fff4b0;
-    color: #5f5000;
-}
-
-.cell-willy {
-    background-color: #c9f3d0;
-    color: #165224;
+.legende-image {
+    display: inline-block;
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-right: 0.4rem;
+    border: 1px solid #bfc7d2;
+    vertical-align: middle;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .bloc-carte,

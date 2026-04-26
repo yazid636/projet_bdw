@@ -9,12 +9,4 @@
     <h1>{{ SESSION['APP'] }}</h1>
     <strong>{{ SESSION['BASELINE'] }}</strong>
 
-    <div style="position:absolute; top:20px; right:20px;">
-		{% if SESSION.PSEUDO %}
-			Connecté en tant que <strong>{{ SESSION.PSEUDO }}</strong><br>
-		{% else %}
-			<a href="/connexion">Se connecter</a>
-		{% endif %}
-	</div>
-
 </header>
